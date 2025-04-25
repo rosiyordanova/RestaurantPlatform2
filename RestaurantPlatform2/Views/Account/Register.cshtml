@@ -1,0 +1,44 @@
+﻿@model RestaurantPlatform.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container mt-5" style="max-width: 450px;">
+    <div class="card shadow">
+        <div class="card-body">
+            <h2 class="text-center mb-4">📝 Регистрация</h2>
+
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Имейл</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Парола</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label">Потвърди парола</label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Регистрирай се</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p>Вече имате акаунт? <a asp-action="Login">Вход</a></p>
+                <p><a asp-action="ForgotPassword">Забравена парола?</a></p>
+            </div>
+
+
+        </div>
+    </div>
+</div>

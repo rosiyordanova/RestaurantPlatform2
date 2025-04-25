@@ -1,0 +1,32 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.Category>
+
+@{
+    ViewData["Title"] = "Категории";
+}
+
+<h2>Списък с категории</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Добави категория</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Име</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Редактирай</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Изтрий</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

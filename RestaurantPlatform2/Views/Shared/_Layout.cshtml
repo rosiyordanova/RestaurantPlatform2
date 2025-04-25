@@ -1,0 +1,238 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject RestaurantPlatform2.Data.ApplicationDbContext DbContext
+
+@{
+    var newOrdersCount = 0;
+    var newReservationsCount = 0;
+
+    if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        newOrdersCount = DbContext.Orders.Count(o => o.IsNew);
+        newReservationsCount = DbContext.Reservations.Count(r => r.IsNew);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Rosé & Dine</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/RestaurantPlatform2.styles.css" asp-append-version="true" />
+
+    <style>
+        .navbar {
+            background-color: #000;
+        }
+
+        .navbar-nav .nav-link {
+            color: white;
+            text-decoration: none;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #f8f9fa;
+            }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+
+        .navbar-nav .ml-auto {
+            margin-left: auto;
+        }
+
+        .navbar-nav .nav-link.btn-light {
+            background-color: transparent;
+            color: white; 
+            border: none;
+        }
+
+            .navbar-nav .nav-link.btn-light:hover {
+                background-color: #f8f9fa; 
+                color: #333; 
+            }
+
+body {
+    background-color: #fffaf4;
+    font-family: 'Inter', sans-serif;
+    color: #2c2c2c;
+}
+
+.card, .form-control, .form-select, .table {
+    background-color: #fffdf9;
+    border: none;
+    border-radius: 2rem;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+}
+
+.btn {
+    border-radius: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+}
+
+.btn-success, .btn-primary {
+    background-color: #801d1d;
+    border-color: #801d1d;
+}
+
+.btn-success:hover, .btn-primary:hover {
+    background-color: #6b1616;
+    border-color: #6b1616;
+}
+
+.form-control, .form-select {
+    border-radius: 1.2rem;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+}
+
+input:invalid, .input-validation-error {
+    border-color: #dc3545 !important;
+    background-color: #fff0f0;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.table img {
+    border-radius: 1rem;
+}
+
+
+.badge {
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    padding: 0.3em 0.6em;
+}
+
+.container, .row, .form-group {
+    margin-bottom: 1rem;
+}
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/rosé_and_dine_logo.png" alt="Rosé & Dine Logo" height="80" width="auto">
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Начало</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Dishes" asp-action="Index">Ястия</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cart" asp-action="Index">Кошница</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Location">Контакти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Админ табло</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Reviews" asp-action="Pending">Одобрение на рецензии</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Reviews" asp-action="All">Рецензии</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link" asp-controller="Categories" asp-action="Index">Категории</a>
+                            </li>
+                            <li class="nav-item position-relative">
+                            <a class="nav-link" asp-controller="Orders" asp-action="@(User.IsInRole("Admin") ? "AllOrders" : "MyOrders")">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <span class="position-relative">
+                                        Поръчки
+                                        @if (newOrdersCount > 0)
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                @newOrdersCount
+                                                <span class="visually-hidden">нови поръчки</span>
+                                            </span>
+                                        }
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>Моите поръчки</span>
+                                }
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SiteSettings" asp-action="Edit">⚙️ Настройки на сайта</a>
+                            </li>
+                        }
+
+                    </ul>
+
+                    <ul class="navbar-nav ml-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Profile" asp-action="MyAccount">Моят профил</a> <!-- Моят профил вдясно -->
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="nav-link btn-light">🚪 Изход</button> <!-- Бял бутон -->
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn-light" asp-controller="Account" asp-action="Login">Вход</a> <!-- Бял бутон -->
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn-light" asp-controller="Account" asp-action="Register">Регистрация</a> <!-- Бял бутон -->
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - Rosé & Dine - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

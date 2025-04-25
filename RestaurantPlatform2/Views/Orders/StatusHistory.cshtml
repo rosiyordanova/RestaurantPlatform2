@@ -1,0 +1,36 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.OrderStatusLog>
+
+@{
+    ViewData["Title"] = "История на статусите";
+}
+
+<h3>История на статусите на поръчка №@ViewData["OrderId"]</h3>
+
+@if (!Model.Any())
+{
+    <p>Няма налична история за тази поръчка.</p>
+}
+else
+{
+    <a asp-action="@(User.IsInRole("Admin") ? "AllOrders" : "MyOrders")" class="btn btn-secondary mb-3">Назад</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Променено от</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model)
+            {
+                <tr>
+                    <td>@entry.Status</td>
+                    <td>@entry.ChangedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@entry.ChangedByUser?.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

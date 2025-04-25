@@ -1,0 +1,36 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.WorkingHours>
+
+@{
+    ViewData["Title"] = "Работно време";
+}
+
+<h2>Работно време на ресторанта</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Добави ден</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ден</th>
+            <th>От</th>
+            <th>До</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Day</td>
+                <td>@item.OpenTime</td>
+                <td>@item.CloseTime</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Редактирай</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Изтрий</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

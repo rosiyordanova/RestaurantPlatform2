@@ -1,0 +1,61 @@
+﻿@model RestaurantPlatform.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = "Нова резервация";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label">Дата</label>
+        <input asp-for="Date" class="form-control" type="date" id="datePicker" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Time" class="form-label">Час</label>
+        <input asp-for="Time" class="form-control" type="time" />
+        <span asp-validation-for="Time" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NumberOfGuests" class="form-label">Брой гости</label>
+        <input asp-for="NumberOfGuests" class="form-control" type="number" placeholder="Въведете брой гости" min="1" max="20" />
+        <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Note" class="form-label">Коментар</label>
+        <textarea asp-for="Note" class="form-control" rows="3" placeholder="Напишете името на човека, който прави резервацията..."></textarea>
+        <small class="form-text text-muted">* Моля, включете името на лицето, което прави резервацията.</small>
+        <span asp-validation-for="Note" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Изпрати резервация</button>
+    <a asp-action="MyReservations" class="btn btn-secondary">Назад</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dateInput = document.getElementById('datePicker');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        });
+    </script>
+}

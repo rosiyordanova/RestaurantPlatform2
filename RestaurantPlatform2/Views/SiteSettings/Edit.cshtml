@@ -1,0 +1,25 @@
+﻿@model RestaurantPlatform.Models.SiteSetting
+
+@{
+    ViewData["Title"] = "Настройки на сайта";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="GlobalMessage" class="form-label">Глобално съобщение</label>
+        <textarea asp-for="GlobalMessage" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="GlobalMessage" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Запази</button>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.GlobalMessage))
+{
+    <div class="alert alert-info mt-3">
+        <strong>Текущо съобщение:</strong> @Model.GlobalMessage
+    </div>
+}
+    

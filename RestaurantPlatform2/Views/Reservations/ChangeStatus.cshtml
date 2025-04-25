@@ -1,0 +1,32 @@
+﻿@model RestaurantPlatform.Models.Reservation
+
+@{
+    ViewData["Title"] = "Промяна на статус на резервация";
+    var statuses = Enum.GetValues(typeof(RestaurantPlatform.Models.ReservationStatus))
+                       .Cast<RestaurantPlatform.Models.ReservationStatus>()
+                       .Select(s => new SelectListItem
+                               {
+                                   Text = s.ToString(),
+                                   Value = s.ToString(),
+                                   Selected = s == Model.Status
+                               }).ToList();
+}
+
+<h2>Промени статус на резервация</h2>
+
+<form asp-action="ChangeStatus" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label>Нов статус:</label>
+        <select name="status" class="form-control">
+            @foreach (var status in statuses)
+            {
+                <option value="@status.Value" selected="@status.Selected">@status.Text</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Запази</button>
+    <a asp-action="AllReservations" class="btn btn-secondary mt-2">Назад</a>
+</form>

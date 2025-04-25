@@ -1,0 +1,95 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+.logo-image {
+    width: 150px; /* Размер на логото */
+    height: auto;
+    max-width: 100%; /* Гарантира, че логото няма да бъде по-широко от родителския елемент */
+}
+
+body {
+    margin-bottom: 60px;
+}
+/* Общ фон */
+body {
+    background-color: #fffaf4;
+}
+
+/* Карта около всяко ястие (ако използваш div.card) */
+.card {
+    background-color: #fffdf9;
+    border: none;
+    border-radius: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Бутони */
+.btn {
+    border-radius: 1.5rem;
+    padding: 0.5rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background-color: #8d2e33;
+    border-color: #8d2e33;
+    color: white;
+}
+
+    .btn-success:hover {
+        background-color: #741f24;
+        border-color: #741f24;
+    }
+
+.btn-outline-info {
+    border-color: #bd9064;
+    color: #bd9064;
+}
+
+    .btn-outline-info:hover {
+        background-color: #bd9064;
+        color: white;
+    }
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+/* Визуална промяна на бейджове */
+.badge.bg-warning {
+    background-color: #f8c291 !important;
+    color: #5c2c06 !important;
+    border-radius: 1rem;
+}
+
+.badge.bg-info {
+    background-color: #dff9fb !important;
+    color: #0a3d62 !important;
+    border-radius: 1rem;
+}
+
+.badge.bg-secondary {
+    background-color: #cccccc !important;
+    color: #333 !important;
+    border-radius: 1rem;
+}

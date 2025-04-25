@@ -1,0 +1,170 @@
+﻿@{
+    ViewData["Title"] = "Админ табло";
+    var dishes = ViewData["TotalDishes"];
+    var categories = ViewData["TotalCategories"];
+}
+
+<h2>Административно табло</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Общо ястия</h5>
+                <p class="card-text display-4">@dishes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Общо категории</h5>
+                <p class="card-text display-4">@categories</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3 d-flex gap-3 flex-wrap">
+    <a asp-controller="Dishes" asp-action="Index" class="btn btn-outline-primary btn-lg">Управление на ястия</a>
+    <a asp-controller="Categories" asp-action="Index" class="btn btn-outline-secondary btn-lg">Управление на категории</a>
+</div>
+
+<hr />
+<h3>Анализ на поръчки</h3>
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="ordersChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="topDishesChart"></canvas>
+    </div>
+</div>
+
+<hr />
+<h3 class="mt-5">Графики</h3>
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="ordersChart2"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="topDishesChart2"></canvas>
+    </div>
+    <div class="col-md-6 mt-4">
+        <canvas id="reservationsChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- 🔹 OrdersPerDay -->
+    <script>
+        fetch('/Admin/OrdersPerDay')
+            .then(res => res.json())
+            .then(data => {
+                new Chart(document.getElementById('ordersChart'), {
+                    type: 'line',
+                    data: {
+                        labels: data.map(x => x.date),
+                        datasets: [{
+                            label: 'Поръчки на ден',
+                            data: data.map(x => x.count),
+                            borderColor: 'blue',
+                            fill: false,
+                            tension: 0.2
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+    </script>
+
+    <!-- 🔹 TopDishes -->
+    <script>
+        fetch('/Admin/TopDishes')
+            .then(res => res.json())
+            .then(data => {
+                new Chart(document.getElementById('topDishesChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(x => x.dish),
+                        datasets: [{
+                            label: 'Най-поръчвани ястия',
+                            data: data.map(x => x.quantity),
+                            backgroundColor: 'orange'
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+    </script>
+
+    <!-- 🔹 ReservationsByHour -->
+    <script>
+        fetch('/Admin/ReservationsByHour')
+            .then(res => res.json())
+            .then(data => {
+                new Chart(document.getElementById('reservationsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(x => x.hour + ':00'),
+                        datasets: [{
+                            label: 'Резервации по час',
+                            data: data.map(x => x.count),
+                            backgroundColor: 'teal'
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+    </script>
+
+    <!-- 🔹 GetOrdersPerDay (вторичен график) -->
+    <script>
+        fetch('/Admin/GetOrdersPerDay')
+            .then(res => res.json())
+            .then(data => {
+                const ctx = document.getElementById('ordersChart2').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map(x => x.date),
+                        datasets: [{
+                            label: 'Брой поръчки',
+                            data: data.map(x => x.count),
+                            fill: false,
+                            borderColor: 'blue',
+                            tension: 0.2
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            });
+    </script>
+
+    <!-- 🔹 GetTopDishes (вторичен график) -->
+    <script>
+        fetch('/Admin/GetTopDishes')
+            .then(res => res.json())
+            .then(data => {
+                const ctx = document.getElementById('topDishesChart2').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(x => x.dish),
+                        datasets: [{
+                            label: 'Брой поръчки',
+                            data: data.map(x => x.quantity),
+                            backgroundColor: 'orange'
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            });
+    </script>
+}

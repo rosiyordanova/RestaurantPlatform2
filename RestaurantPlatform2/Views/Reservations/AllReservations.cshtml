@@ -1,0 +1,86 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Всички резервации";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- 🔍 Форма за филтриране -->
+<form method="get" class="row mb-3">
+    <div class="col-md-3">
+        <input type="text" name="userEmail" value="@Context.Request.Query["userEmail"]" class="form-control" placeholder="Имейл на потребител" />
+    </div>
+    <div class="col-md-2">
+        <input type="date" name="startDate" value="@Context.Request.Query["startDate"]" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <input type="date" name="endDate" value="@Context.Request.Query["endDate"]" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <select name="status" class="form-control">
+            <option value="">Всички статуси</option>
+            @foreach (var s in Enum.GetValues(typeof(RestaurantPlatform.Models.ReservationStatus)))
+            {
+                var isSelected = Context.Request.Query["status"] == s.ToString();
+                <option value="@s" selected="@(isSelected ? "selected" : null)">@s</option>
+            }
+
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Филтрирай</button>
+    </div>
+</form>
+
+<!-- 📤 Форма за експорт в Excel -->
+<form asp-action="ExportToExcel" method="get" class="row mb-4">
+    <div class="col-md-4">
+        <label>От дата:</label>
+        <input type="date" name="startDate" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <label>До дата:</label>
+        <input type="date" name="endDate" class="form-control" />
+    </div>
+    <div class="col-md-4 align-self-end">
+        <button type="submit" class="btn btn-outline-success mt-2">📥 Експорт на резервации</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <p>Няма направени резервации.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Потребител</th>
+                <th>Дата</th>
+                <th>Час</th>
+                <th>Гости</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.User?.UserName</td>
+                    <td>@r.Date.ToString("dd.MM.yyyy")</td>
+                    <td>@r.Time.ToString(@"hh\:mm")</td>
+                    <td>@r.NumberOfGuests</td>
+                    <td>@r.Status</td>
+                    <td>
+                        <a asp-action="ChangeStatus" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">
+                            Промени
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

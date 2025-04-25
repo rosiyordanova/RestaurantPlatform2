@@ -1,0 +1,24 @@
+﻿@model RestaurantPlatform.Models.WorkingHours
+
+@{
+    ViewData["Title"] = "Изтриване на запис";
+}
+
+<h2>Изтриване на запис за работно време</h2>
+
+<dl class="row">
+    <dt class="col-sm-2">Ден</dt>
+    <dd class="col-sm-10">@Model.Day</dd>
+
+    <dt class="col-sm-2">От</dt>
+    <dd class="col-sm-10">@Model.OpenTime</dd>
+
+    <dt class="col-sm-2">До</dt>
+    <dd class="col-sm-10">@Model.CloseTime</dd>
+</dl>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Изтрий</button>
+    <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>

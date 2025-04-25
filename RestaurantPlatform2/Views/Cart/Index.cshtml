@@ -1,0 +1,57 @@
+﻿@model List<RestaurantPlatform.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Моята кошница";
+    decimal total = Model.Sum(i => i.Price * i.Quantity);
+}
+
+<h2>🛒 Моята кошница</h2>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">Кошницата е празна.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Ястие</th>
+                <th>Цена (лв.)</th>
+                <th>Количество</th>
+                <th>Общо</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.DishName</td>
+                    <td>@($"{item.Price:0.00}")</td>
+                    <td>@item.Quantity</td>
+                    <td>@($"{item.Price * item.Quantity:0.00}")</td>
+                    <td>
+                        <a asp-action="Remove" asp-route-id="@item.DishId" class="btn btn-danger btn-sm">Премахни</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold">Обща сума:</td>
+                <td class="fw-bold">@($"{total:0.00}") лв.</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Clear" class="btn btn-outline-secondary">Изчисти кошницата</a>
+
+        <form asp-controller="Orders" asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-success">📦 Изпрати поръчка</button>
+        </form>
+    </div>
+}

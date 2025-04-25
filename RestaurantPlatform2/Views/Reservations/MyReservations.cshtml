@@ -1,0 +1,56 @@
+﻿@using RestaurantPlatform.Models
+@model IEnumerable<RestaurantPlatform.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Моите резервации";
+}
+
+<h2>Моите резервации</h2>
+
+@if (!Model.Any())
+{
+    <p>Нямате направени резервации.</p>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Час</th>
+                <th>Гости</th>
+                <th>Статус</th>
+                <th>Коментар</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Date.ToString("dd.MM.yyyy")</td>
+                    <td>@reservation.Time.ToString(@"hh\:mm")</td>
+                    <td>@reservation.NumberOfGuests</td>
+                    <td>@reservation.Status</td>
+                    <td>@reservation.Note</td>
+                    <td>
+                        @if (reservation.Status == ReservationStatus.Изчакваща)
+                        {
+                            <a asp-action="Delete" asp-route-id="@reservation.Id" class="btn btn-danger btn-sm">Изтрий</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

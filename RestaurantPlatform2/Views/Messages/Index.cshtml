@@ -1,0 +1,38 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.ContactMessage>
+
+@{
+    ViewData["Title"] = "Съобщения от контактната форма";
+}
+
+<h2>Получени съобщения</h2>
+
+@if (!Model.Any())
+{
+    <p>Няма получени съобщения.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Име</th>
+                <th>Имейл</th>
+                <th>Дата</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var msg in Model)
+            {
+                <tr>
+                    <td>@msg.Name</td>
+                    <td>@msg.Email</td>
+                    <td>@msg.SentAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@msg.Id" class="btn btn-outline-primary btn-sm">Преглед</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,17 @@
+﻿@model RestaurantPlatform.Models.Category
+
+@{
+    ViewData["Title"] = "Изтриване на категория";
+}
+
+<h2>Сигурни ли сте, че искате да изтриете тази категория?</h2>
+
+<div>
+    <h4>@Model.Name</h4>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Изтрий</button>
+        <a asp-action="Index" class="btn btn-secondary">Назад</a>
+    </form>
+</div>

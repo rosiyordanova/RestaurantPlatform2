@@ -1,0 +1,44 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.FavoriteDish>
+
+@{
+    ViewData["Title"] = "Моите любими ястия";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Нямате добавени любими ястия.</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var favorite in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow">
+                    <img src="@favorite.Dish.ImageUrl" class="card-img-top" alt="@favorite.Dish.Name" style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@favorite.Dish.Name</h5>
+                        <p class="card-text">@favorite.Dish.Description</p>
+                        <p class="card-text fw-bold">@favorite.Dish.Price.ToString("F2") лв.</p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <form asp-controller="Favorites" asp-action="Remove" method="post">
+                            <input type="hidden" name="dishId" value="@favorite.DishId" />
+                            <button type="submit" class="btn btn-sm btn-danger">Премахни от любими</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

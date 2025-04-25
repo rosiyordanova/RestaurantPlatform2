@@ -1,0 +1,45 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.Dish>
+
+@{
+    ViewData["Title"] = "Препоръчани за вас";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <p>Няма достатъчно данни за препоръки.</p>
+}
+else
+{
+    <div class="alert alert-info">
+        @if (ViewBag.IsGlobal != null)
+        {
+            <strong>Популярни ястия сред всички клиенти:</strong>
+        }
+        else
+        {
+            <strong>Препоръчани за вас:</strong>
+        }
+    </div>
+
+    <div class="row">
+        @foreach (var dish in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(dish.ImageUrl))
+                    {
+                        <img src="@dish.ImageUrl" class="card-img-top" alt="@dish.Name" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@dish.Name</h5>
+                        <p class="card-text">@dish.Description</p>
+                        <p><strong>@dish.Price.ToString("F2") лв.</strong></p>
+                        <a asp-controller="Dishes" asp-action="Details" asp-route-id="@dish.Id" class="btn btn-sm btn-outline-primary">Виж ястието</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

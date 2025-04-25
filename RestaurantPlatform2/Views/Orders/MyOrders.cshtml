@@ -1,0 +1,83 @@
+﻿@model List<RestaurantPlatform.Models.Order>
+
+@{
+    ViewData["Title"] = "Моите поръчки";
+
+    string GetStatusBadge(RestaurantPlatform.Models.OrderStatus status) => status switch
+    {
+        RestaurantPlatform.Models.OrderStatus.Изчакваща => "bg-warning text-dark",
+        RestaurantPlatform.Models.OrderStatus.ОбработваСе => "bg-primary",
+        RestaurantPlatform.Models.OrderStatus.Доставена => "bg-success",
+        RestaurantPlatform.Models.OrderStatus.Отказана => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    string GetStatusIcon(RestaurantPlatform.Models.OrderStatus status) => status switch
+    {
+        RestaurantPlatform.Models.OrderStatus.Изчакваща => "⏳",
+        RestaurantPlatform.Models.OrderStatus.ОбработваСе => "🔄",
+        RestaurantPlatform.Models.OrderStatus.Доставена => "✅",
+        RestaurantPlatform.Models.OrderStatus.Отказана => "❌",
+        _ => ""
+    };
+}
+
+<h2>Моите поръчки</h2>
+
+@if (!Model.Any())
+{
+    <p>Нямате направени поръчки.</p>
+}
+else
+{
+    foreach (var order in Model)
+    {
+        var badgeClass = GetStatusBadge(order.Status);
+        var icon = GetStatusIcon(order.Status);
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Поръчка №@order.Id</strong> • @order.OrderDate.ToString("dd.MM.yyyy HH:mm")<br />
+                    Статус:
+                    <span class="badge @badgeClass">@icon @order.Status</span>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a asp-action="StatusHistory" asp-route-orderId="@order.Id" class="btn btn-outline-secondary btn-sm">
+                        История
+                    </a>
+                    <form asp-action="Reorder" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <button type="submit" class="btn btn-outline-success btn-sm">🔁 Поръчай отново</button>
+                    </form>
+                    <a asp-action="Receipt" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary">
+                        🧾 Касова бележка
+                    </a>
+                    <a asp-action="GenerateInvoicePdf" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">
+                        📄 Фактура (PDF)
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var item in order.Items)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @item.Dish.Name
+                            <span>Количество: @item.Quantity</span>
+                        </li>
+                    }
+                </ul>
+
+                <div class="mt-3">
+                    <strong>QR код за поръчка:</strong><br />
+                    <img src="@Url.Action("GenerateQrCode", "Orders", new { id = order.Id })"
+                         alt="QR код за поръчка"
+                         class="img-thumbnail"
+                         style="max-width: 200px;" />
+                </div>
+            </div>
+        </div>
+    }
+}

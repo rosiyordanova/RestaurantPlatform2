@@ -1,0 +1,135 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject RestaurantPlatform2.Data.ApplicationDbContext DbContext
+
+@{
+    ViewData["Title"] = "Начало";
+    var globalMessage = DbContext.SiteSettings.FirstOrDefault()?.GlobalMessage;
+
+    var newOrdersCount = 0;
+    var newReservationsCount = 0;
+
+    if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        newOrdersCount = DbContext.Orders.Count(o => o.IsNew);
+        newReservationsCount = DbContext.Reservations.Count(r => r.IsNew);
+    }
+
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var id = ViewContext.RouteData.Values["id"];
+
+    var controllerNames = new Dictionary<string, string>
+    {
+        { "Dishes", "Ястия 🍽" },
+        { "Orders", "Поръчки 🧾" },
+        { "Cart", "Кошница 🛒" },
+        { "Reservations", "Резервации 🪑" },
+        { "Reviews", "Рецензии ✍️" },
+        { "Profile", "Моят профил 👤" },
+        { "Favorites", "Любими ❤️" },
+        { "Admin", "Админ табло ⚙️" }
+    };
+
+    var actionNames = new Dictionary<string, string>
+    {
+        { "Index", "Начало" },
+        { "Details", "Детайли" },
+        { "Create", "Създай" },
+        { "Edit", "Редакция" },
+        { "MyOrders", "Моите поръчки" },
+        { "MyReservations", "Моите резервации" },
+        { "Receipt", "Касова бележка" },
+        { "Recommendations", "Препоръчани ястия" },
+        { "Pending", "За одобрение" }
+    };
+}
+
+@if (!string.IsNullOrWhiteSpace(globalMessage))
+{
+    <div class="alert alert-warning text-center mb-0 rounded-0">
+        @globalMessage
+    </div>
+}
+
+<!-- Главна част с лого и текст -->
+<header class="bg-dark text-white text-center py-5 mb-4" style="background: url('/images/home_page.png') no-repeat center center; background-size: cover; background-attachment: fixed; opacity: 0.9;">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-shadow">Добре дошли в <span class="text-warning">Rosé & Dine</span></h1>
+        <p class="lead">Вашето място за вкусна храна, лесни поръчки и удобни резервации</p>
+        <a href="/Dishes" class="btn btn-warning btn-lg mt-3 shadow-lg hover-effect">Разгледай меню</a>
+    </div>
+</header>
+
+<!-- Основно съдържание -->
+<div class="container text-center">
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-lg hover-effect h-100">
+                <div class="card-body">
+                    <i class="bi bi-basket-fill display-4 text-primary"></i>
+                    <h5 class="card-title mt-2">Поръчка</h5>
+                    <p class="card-text">Избери от нашето меню и поръчай онлайн</p>
+                    <a href="/Dishes" class="btn btn-outline-primary hover-effect">Поръчай</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-lg hover-effect h-100">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check-fill display-4 text-success"></i>
+                    <h5 class="card-title mt-2">Резервация</h5>
+                    <p class="card-text">Запази маса за специален повод или вечеря</p>
+                    <a href="/Reservations/Create" class="btn btn-outline-success hover-effect">Резервирай</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-lg hover-effect h-100">
+                <div class="card-body">
+                    <i class="bi bi-emoji-heart-eyes display-4 text-danger"></i>
+                    <h5 class="card-title mt-2">Любими ястия</h5>
+                    <p class="card-text">Върни се към любимите вкусове</p>
+                    <a href="/Favorites" class="btn btn-outline-danger hover-effect">Виж любими</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="mt-5">
+            <h3 class="mb-3">Препоръчани за вас</h3>
+            <a asp-action="Recommendations" class="btn btn-outline-info hover-effect">
+                🍽 Виж предложения
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Допълнителни CSS стилове за hover ефекти -->
+<style>
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #ffd700;
+        color: #000;
+    }
+
+    .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.25rem;
+    }
+</style>

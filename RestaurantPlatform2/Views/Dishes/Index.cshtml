@@ -1,0 +1,147 @@
+﻿@model IEnumerable<RestaurantPlatform.Models.Dish>
+
+@{
+    ViewData["Title"] = "Ястия";
+    var favoriteIds = ViewData["FavoriteDishIds"] as List<int> ?? new List<int>();
+}
+
+<h2>Списък с ястия</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success">Добави ново ястие</a>
+    </p>
+}
+
+
+<form method="get" class="row mb-3">
+    <div class="col-md-3">
+        <input type="text" name="search" value="@Context.Request.Query["search"]" class="form-control" placeholder="Търсене по име..." />
+    </div>
+    <div class="col-md-3">
+        <select name="categoryId" class="form-control" asp-items="@(ViewData["Categories"] as SelectList)">
+            <option value="">Всички категории</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="season" class="form-control">
+            <option value="">Всички сезони</option>
+            @foreach (var s in Enum.GetValues(typeof(RestaurantPlatform.Models.Enums.Season)))
+            {
+                var selected = Context.Request.Query["season"] == s.ToString() ? "selected" : "";
+                <option value="@s" selected="@selected">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <input type="number" name="maxPrice" value="@Context.Request.Query["maxPrice"]" class="form-control" placeholder="Макс. цена" step="0.01" />
+    </div>
+    <div class="col-md-3 mt-2">
+        <button type="submit" class="btn btn-primary">Филтрирай</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Снимка</th>
+            <th>Име</th>
+            <th>Описание</th>
+            <th>Цена</th>
+            <th>Категория</th>
+            <th>Оценка</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">Няма намерени ястия по зададените критерии.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                var isFavorite = favoriteIds.Contains(item.Id);
+
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" class="img-thumbnail" style="max-height:100px;" />
+                        }
+                    </td>
+                    <td>
+                        @item.Name
+
+                        @if (item.Season != RestaurantPlatform.Models.Enums.Season.Всесезонно)
+                        {
+                            <span class="badge bg-info text-dark ms-1">
+                                @item.Season.ToString() специалитет
+                            </span>
+                        }
+
+                        @if (item.IsNew || (DateTime.Now - item.CreatedAt).TotalDays <= 7)
+                        {
+                            <span class="badge bg-warning text-dark ms-2">Ново</span>
+                        }
+
+                        @if (User.IsInRole("Admin") && !item.IsAvailable)
+                        {
+                            <span class="badge bg-secondary ms-1">❌ Неналично</span>
+                        }
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <p class="text-muted">Сезон: @item.Season</p>
+                        }
+                    </td>
+                    <td>@item.Description</td>
+                    <td>@item.Price.ToString("F2") лв.</td>
+                    <td>@item.Category?.Name</td>
+                    <td>
+                        @if (item.Reviews != null && item.Reviews.Any())
+                        {
+                            var avgRating = item.Reviews.Average(r => r.Rating);
+                            <span>@avgRating.ToString("0.0") / 5</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Няма оценки</span>
+                        }
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Редактирай</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Изтрий</a>
+                        }
+
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">Детайли</a>
+
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <form asp-controller="Favorites" asp-action="Add" method="post" class="d-inline">
+                                <input type="hidden" name="dishId" value="@item.Id" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm" @(isFavorite ? "disabled" : "")>
+                                    ❤️ @(isFavorite ? "В любими" : "Добави в любими")
+                                </button>
+                            </form>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline ms-1">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    🛒 В кошницата
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,34 @@
+﻿@model RestaurantPlatform.Models.WorkingHours
+
+@{
+    ViewData["Title"] = "Добавяне на работно време";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="Day" class="form-label"></label>
+        <select asp-for="Day" asp-items="Html.GetEnumSelectList<DayOfWeek>()" class="form-control"></select>
+        <span asp-validation-for="Day" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="OpenTime" class="form-label"></label>
+        <input asp-for="OpenTime" type="time" class="form-control" />
+        <span asp-validation-for="OpenTime" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="CloseTime" class="form-label"></label>
+        <input asp-for="CloseTime" type="time" class="form-control" />
+        <span asp-validation-for="CloseTime" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Запази</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Назад</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

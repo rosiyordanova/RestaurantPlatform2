@@ -1,0 +1,25 @@
+﻿@model RestaurantPlatform.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Моят акаунт";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Информация за акаунта</h4>
+        <p><strong>Електронна поща:</strong> @Model.Email</p>
+        <p><strong>Общо поръчки:</strong> @Model.TotalOrders</p>
+        <p><strong>Общо резервации:</strong> @Model.TotalReservations</p>
+        <p><strong>Общо любими ястия:</strong> @Model.TotalFavorites</p>
+
+        <h4>Смяна на парола</h4>
+        <a href="@Url.Action("ChangePassword", "Account")" class="btn btn-primary">Смени паролата</a>
+    </div>
+</div>

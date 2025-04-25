@@ -1,0 +1,38 @@
+﻿@model RestaurantPlatform.Models.Order
+
+@{
+    ViewData["Title"] = "Промяна на статус";
+
+    var statuses = Enum.GetValues(typeof(RestaurantPlatform.Models.OrderStatus))
+                       .Cast<RestaurantPlatform.Models.OrderStatus>()
+                       .Select(s => new SelectListItem
+                               {
+                                   Text = s.ToString(),
+                                   Value = s.ToString(),
+                                   Selected = s == Model.Status
+                               }).ToList();
+}
+
+<h2>Промяна на статус на поръчка №@Model.Id</h2>
+
+<div class="mb-3">
+    <strong>Дата:</strong> @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")<br />
+    <strong>Брой ястия:</strong> @Model.Items.Count
+</div>
+
+<form asp-action="ChangeStatus" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label for="status">Избери нов статус:</label>
+        <select name="status" class="form-control">
+            @foreach (var status in statuses)
+            {
+                <option value="@status.Value" selected="@status.Selected">@status.Text</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Запази</button>
+    <a asp-action="AllOrders" class="btn btn-secondary mt-2">Назад</a>
+</form>

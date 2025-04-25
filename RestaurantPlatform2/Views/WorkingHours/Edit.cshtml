@@ -1,0 +1,25 @@
+﻿@model RestaurantPlatform.Models.WorkingHours
+
+@{
+    ViewData["Title"] = "Редакция на работно време";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Day"></label>
+        <select asp-for="Day" asp-items="Html.GetEnumSelectList<DayOfWeek>()" class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="OpenTime"></label>
+        <input asp-for="OpenTime" type="time" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="CloseTime"></label>
+        <input asp-for="CloseTime" type="time" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Запази</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Назад</a>
+</form>

@@ -1,0 +1,89 @@
+﻿@model List<RestaurantPlatform.Models.Order>
+
+@{
+    ViewData["Title"] = "Всички поръчки";
+
+    string GetStatusBadge(RestaurantPlatform.Models.OrderStatus status) =>
+        status switch
+        {
+            RestaurantPlatform.Models.OrderStatus.Изчакваща => "bg-warning text-dark",
+            RestaurantPlatform.Models.OrderStatus.ОбработваСе => "bg-primary",
+            RestaurantPlatform.Models.OrderStatus.Доставена => "bg-success",
+            RestaurantPlatform.Models.OrderStatus.Отказана => "bg-danger",
+            _ => "bg-secondary"
+        };
+
+    string GetStatusIcon(RestaurantPlatform.Models.OrderStatus status) =>
+        status switch
+        {
+            RestaurantPlatform.Models.OrderStatus.Изчакваща => "⏳",
+            RestaurantPlatform.Models.OrderStatus.ОбработваСе => "🔄",
+            RestaurantPlatform.Models.OrderStatus.Доставена => "✅",
+            RestaurantPlatform.Models.OrderStatus.Отказана => "❌",
+            _ => ""
+        };
+}
+
+<h2>Всички поръчки</h2>
+
+<!-- 🔽 Форма за генериране на отчет по дати -->
+<form asp-action="ExportReport" method="get" class="row mb-4">
+    <div class="col-md-4">
+        <label>От дата:</label>
+        <input type="date" name="startDate" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <label>До дата:</label>
+        <input type="date" name="endDate" class="form-control" />
+    </div>
+    <div class="col-md-4 align-self-end">
+        <button type="submit" class="btn btn-outline-success mt-2">📥 Генерирай отчет</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <p>Няма направени поръчки.</p>
+}
+else
+{
+    foreach (var order in Model)
+    {
+        var badgeClass = GetStatusBadge(order.Status);
+        var icon = GetStatusIcon(order.Status);
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Поръчка №@order.Id</strong> • @order.OrderDate.ToString("dd.MM.yyyy HH:mm")<br />
+                    Потребител: <span class="text-muted">@order.UserId</span><br />
+                    Статус: <span class="badge @badgeClass">@icon @order.Status</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="ChangeStatus" asp-route-id="@order.Id" class="btn btn-outline-primary btn-sm">
+                        Промени статус
+                    </a>
+                    <a asp-action="StatusHistory" asp-route-orderId="@order.Id" class="btn btn-outline-secondary btn-sm">
+                        История
+                    </a>
+                    <a asp-action="GenerateInvoicePdf" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">
+                        🧾 Фактура (PDF)
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var item in order.Items)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @item.Dish.Name
+                            <span>Количество: @item.Quantity</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}

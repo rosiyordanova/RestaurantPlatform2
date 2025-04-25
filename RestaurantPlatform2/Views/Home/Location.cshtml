@@ -1,0 +1,71 @@
+﻿@model RestaurantPlatform.Models.ViewModels.ContactMessageViewModel
+
+@{
+    ViewData["Title"] = "Локация и контакт";
+}
+
+<h2>Къде се намираме?</h2>
+
+<div class="row">
+    <div class="col-md-7">
+        <div id="map" style="height: 400px;" class="mb-4"></div>
+    </div>
+    <div class="col-md-5">
+        <h4>Свържете се с нас</h4>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
+
+        <form asp-action="Location" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Message" class="form-label"></label>
+                <textarea asp-for="Message" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Изпрати</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function initMap() {
+            const location = { lat: 42.6977, lng: 23.3219 }; // София
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                center: location
+            });
+
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: "RestaurantPlatform"
+            });
+        }
+    </script>
+
+    <script async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQ_sLVyXIgoq54sFtnDmEG10z6t1cPY7s&callback=initMap">
+    </script>
+}

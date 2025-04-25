@@ -1,0 +1,22 @@
+﻿@model RestaurantPlatform.Models.Reservation
+
+@{
+    ViewData["Title"] = "Потвърждение за изтриване на резервация";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Сигурни ли сте, че искате да изтриете следната резервация?</p>
+
+<div>
+    <p><strong>Дата:</strong> @Model.Date.ToString("dd.MM.yyyy")</p>
+    <p><strong>Час:</strong> @Model.Time.ToString(@"hh\:mm")</p>
+    <p><strong>Брой гости:</strong> @Model.NumberOfGuests</p>
+    <p><strong>Коментар:</strong> @Model.Note</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Да, изтрий</button>
+    <a asp-action="MyReservations" class="btn btn-secondary">Отказ</a>
+</form>
